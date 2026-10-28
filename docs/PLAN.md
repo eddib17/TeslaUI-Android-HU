@@ -289,11 +289,15 @@ no dependency on each other can run **in parallel**. Keep one task per PR where 
 
 ### Phase 0 — Foundations (do first, one agent)
 
-**P0-1 Repo scaffold** — deps: none
+**P0-1 Repo scaffold** — deps: none — ✅ **DONE** (CI green: `assembleDebug`, `lintDebug`, `spotlessCheck`, `pio run`)
 - Create Android project in `app/` (Kotlin, Compose, Gradle KTS, version catalog), package `io.github.eddib17.actyhu`.
 - Create empty `firmware/acty-bridge/` PlatformIO project for `esp32-s3-devkitc-1`.
 - Add `.gitignore`, `.editorconfig`, ktlint/detekt (or spotless) config.
 - AC: `./gradlew assembleDebug` succeeds; `pio run` succeeds; app opens a black screen saying "Acty HU".
+- Notes: versions pinned in `gradle/libs.versions.toml` (AGP 8.7.3, Kotlin 2.1.0, Compose BOM 2024.12.01, Gradle 8.11.1);
+  firmware pinned to `espressif32@6.9.0`. ktlint uses the `android_studio` style. A minimal build-only workflow
+  (`.github/workflows/build.yml`) was added to verify this task; P0-2 still owns artifacts, tests and the install guide.
+  On-device check of the "Acty HU" screen still needs the owner (no emulator in the agent sandbox).
 
 **P0-2 CI** — deps: P0-1
 - GitHub Actions: on push/PR build debug APK, run unit tests + lint, build firmware; upload `app-debug.apk` and `firmware.bin` as artifacts.
