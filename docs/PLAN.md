@@ -299,9 +299,13 @@ no dependency on each other can run **in parallel**. Keep one task per PR where 
   (`.github/workflows/build.yml`) was added to verify this task; P0-2 still owns artifacts, tests and the install guide.
   On-device check of the "Acty HU" screen still needs the owner (no emulator in the agent sandbox).
 
-**P0-2 CI** — deps: P0-1
+**P0-2 CI** — deps: P0-1 — ✅ **DONE**
 - GitHub Actions: on push/PR build debug APK, run unit tests + lint, build firmware; upload `app-debug.apk` and `firmware.bin` as artifacts.
 - AC: green run on the branch; artifacts downloadable. README section "How to install the APK" for the owner.
+- Notes: artifacts are `acty-hu-apk` (APK named `acty-hu-<run>-<sha>.apk`) and `acty-bridge-firmware`
+  (`firmware.bin`, `bootloader.bin`, `partitions.bin`), kept 30 days. `versionCode` = GitHub run number so each CI APK
+  installs as an update. APKs are signed with a **fixed debug key committed at `app/debug.keystore`** (public, not
+  secret) — otherwise every CI runner's random key would block updates. Test/lint reports upload only on failure.
 
 **P0-3 Core model + data sources** — deps: P0-1
 - `VehicleState` data class mirroring PROTOCOL.md; `VehicleDataSource` interface; `VehicleRepository` exposing `StateFlow<VehicleState>`.

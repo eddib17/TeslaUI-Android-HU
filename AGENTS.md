@@ -21,6 +21,10 @@ This repo builds **Acty HU**: a Tesla-style Android launcher + an ESP32-S3 signa
 - All tunable numbers (redline, shift point, pulses/rev, thresholds) are **settings**, not constants.
 - Every new signal flows: firmware → PROTOCOL.md → `VehicleState` → UI. Update the simulator and `DemoSource` too.
 - No Tesla logos, wordmarks or proprietary fonts/assets — mimic layout, proportions and feel only.
+- Don't regenerate or remove `app/debug.keystore` — the owner's installed app is signed with it; a new key
+  breaks in-place updates.
+- Before pushing, run what CI runs: `./gradlew spotlessCheck testDebugUnitTest lintDebug assembleDebug` and
+  `pio run -d firmware/acty-bridge`.
 - Firmware: PlatformIO + Arduino framework, `esp32-s3-devkitc-1`. Never assume a pin is 12 V tolerant.
 - Wiring docs must include safety notes (fusing, optocouplers, disconnect battery before wiring).
 

@@ -12,8 +12,21 @@ android {
         applicationId = "io.github.eddib17.actyhu"
         minSdk = 29 // Android 10; the Tab S10+ ships with Android 14+
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        // CI sets GITHUB_RUN_NUMBER, so every CI build has a higher versionCode and installs as an update.
+        val ciBuild = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull()
+        versionCode = ciBuild ?: 1
+        versionName = if (ciBuild != null) "0.1.0-ci.$ciBuild" else "0.1.0-local"
+    }
+
+    signingConfigs {
+        // A fixed debug key checked into the repo. Without it, each CI machine signs with its own random key
+        // and Android refuses to install a new APK over the old one. NOT secret and never for a store release.
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
     }
 
     buildTypes {
@@ -48,4 +61,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    testImplementation(libs.junit)
 }
